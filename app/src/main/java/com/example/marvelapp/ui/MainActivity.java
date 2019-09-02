@@ -5,7 +5,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.marvelapp.R;
-import com.example.marvelapp.ui.fragment.CharacterListFragment;
+import com.example.marvelapp.ui.fragment.home_page.CharacterListFragment;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;

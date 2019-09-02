@@ -1,4 +1,4 @@
-package com.example.marvelapp.ui;
+package com.example.marvelapp.ui.fragment.listener;
 
 import com.example.marvelapp.model.CharacterModel;
 

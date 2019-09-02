@@ -1,4 +1,4 @@
-package com.example.marvelapp.ui.fragment;
+package com.example.marvelapp.ui.fragment.home_page;
 
 
 import com.example.marvelapp.model.ResponseModel;
@@ -13,12 +13,10 @@ public class HomePagePresenter implements HomePageContract.Presenter {
     private CharacterRepository characterRepository;
     private CharacterListFragment view;
 
-    HomePagePresenter(CharacterListFragment view){
+    public HomePagePresenter(CharacterListFragment view){
         this.view = view;
         this.characterRepository = Injection.provideCharacterRepository();
     }
-
-
 
     @Override
     public void downloadCharacters() {

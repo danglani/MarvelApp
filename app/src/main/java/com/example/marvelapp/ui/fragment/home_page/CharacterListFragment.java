@@ -1,8 +1,8 @@
-package com.example.marvelapp.ui.fragment;
+package com.example.marvelapp.ui.fragment.home_page;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
-import android.transition.AutoTransition;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,9 +10,10 @@ import android.widget.ProgressBar;
 
 import com.example.marvelapp.R;
 import com.example.marvelapp.model.CharacterModel;
-import com.example.marvelapp.ui.CharacterListAdapter;
-import com.example.marvelapp.ui.FavouriteClickListener;
-import com.example.marvelapp.ui.ItemClickListener;
+import com.example.marvelapp.ui.fragment.details.DetailFragment;
+import com.example.marvelapp.ui.fragment.home_page.adapter.CharacterListAdapter;
+import com.example.marvelapp.ui.fragment.listener.FavouriteClickListener;
+import com.example.marvelapp.ui.fragment.listener.ItemClickListener;
 import com.example.marvelapp.utils.ScrollPaginationListener;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -21,9 +22,9 @@ import java.util.List;
 import java.util.Objects;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.app.ActivityOptionsCompat;
 import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -36,13 +37,15 @@ import static androidx.constraintlayout.widget.Constraints.TAG;
 public class CharacterListFragment extends Fragment implements ItemClickListener, FavouriteClickListener {
 
     private static final String ARG_COLUMN_COUNT = "column-count";
+    public static final String TAG = CharacterListFragment.class.getSimpleName();
     private int mColumnCount = 2;
+    private List<CharacterModel> characterModelList = new ArrayList<>();
     private HomePagePresenter presenter;
+    private boolean stopLoadingMore;
     @BindView(R.id.progressbar) ProgressBar progressBar;
     @BindView(R.id.list) RecyclerView recyclerView;
     @BindView(R.id.container) ConstraintLayout constraintLayout;
-    private List<CharacterModel> characterModelList = new ArrayList<>();
-    private boolean stopLoadingMore;
+
 
     public CharacterListFragment() {
     }
@@ -59,11 +62,9 @@ public class CharacterListFragment extends Fragment implements ItemClickListener
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }
-
         presenter = new HomePagePresenter(this);
 
     }
@@ -107,12 +108,12 @@ public class CharacterListFragment extends Fragment implements ItemClickListener
     }
 
 
-    void showProgressBar() {
+    public void showProgressBar() {
         progressBar.setVisibility(View.VISIBLE);
     }
 
 
-    void hideProgressBar() {
+    public void hideProgressBar() {
         progressBar.setVisibility(View.GONE);
     }
 
@@ -120,7 +121,7 @@ public class CharacterListFragment extends Fragment implements ItemClickListener
         return progressBar.getVisibility() == View.VISIBLE;
     }
 
-    void showCharacters(List<CharacterModel> results, int total) {
+    public void showCharacters(List<CharacterModel> results, int total) {
         characterModelList.addAll(results);
         Objects.requireNonNull(recyclerView.getAdapter()).notifyDataSetChanged();
         if(characterModelList.size() == total) {
@@ -129,20 +130,24 @@ public class CharacterListFragment extends Fragment implements ItemClickListener
     }
 
 
-    void showError(String error) {
+    public void showError(String error) {
         Snackbar.make(constraintLayout, error, Snackbar.LENGTH_LONG).show();
     }
 
 
     @Override
     public void onItemClickListener(CharacterModel item, View ivImage) {
-        DetailFragment detailFragment = DetailFragment.newInstance(item, ViewCompat.getTransitionName(ivImage));
-        detailFragment.setSharedElementEnterTransition(new AutoTransition());
-        FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        transaction.addSharedElement(ivImage, ViewCompat.getTransitionName(ivImage));
-        transaction.add(R.id.fl_main_content, detailFragment)
-                .addToBackStack(TAG);
-        transaction.commit();
+        if (getFragmentManager() !=null) {
+            Fragment animalDetailFragment = DetailFragment.newInstance(item, ViewCompat.getTransitionName(ivImage));
+            getFragmentManager()
+                    .beginTransaction()
+                    .addSharedElement(ivImage,  ViewCompat.getTransitionName(ivImage))
+                    .addToBackStack(TAG)
+                    .add(R.id.fl_main_content, animalDetailFragment)
+                    .commit();
+
+
+        }
     }
 
 

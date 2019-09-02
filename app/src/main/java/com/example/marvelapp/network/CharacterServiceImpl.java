@@ -7,6 +7,9 @@ import com.example.marvelapp.network.api.ApiClient;
 import com.example.marvelapp.utils.Constants;
 
 import androidx.annotation.NonNull;
+
+import java.io.IOException;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -19,11 +22,19 @@ public class CharacterServiceImpl implements CharacterService {
         Call<ResponseModel> charactersCall = ApiClient.getApiClient().getCharacters(ts, Constants.PUBLIC_API_KEY, md5Hash, Constants.RESULTS_LIMIT, offset);
         charactersCall.enqueue(new Callback<ResponseModel>() {
             @Override
-            public void onResponse(Call<ResponseModel> call, Response<ResponseModel> response) {
+            public void onResponse(@NonNull Call<ResponseModel> call, @NonNull Response<ResponseModel> response) {
                 if (response.isSuccessful()) {
                     if (response.code() == 200) {
-                        ResponseModel characterList = response.body();
-                        callback.onSuccess(characterList);
+                        callback.onSuccess(response.body());
+                    } else {
+                        try {
+                            if (response.errorBody() != null)
+                                callback.onFailure(response.errorBody().string());
+                            else
+                                callback.onFailure(Constants.GENERIC_API_ERROR);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
                 } else {
                     callback.onFailure(Constants.GENERIC_API_ERROR);
@@ -31,8 +42,8 @@ public class CharacterServiceImpl implements CharacterService {
             }
 
             @Override
-            public void onFailure(Call<ResponseModel> call, Throwable t) {
-                callback.onFailure(Constants.GENERIC_API_ERROR);
+            public void onFailure(@NonNull Call<ResponseModel> call, @NonNull Throwable t) {
+                callback.onFailure(t.getLocalizedMessage());
             }
         });
     }

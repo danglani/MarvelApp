@@ -1,4 +1,4 @@
-package com.example.marvelapp.ui.fragment;
+package com.example.marvelapp.ui.fragment.home_page;
 
 import com.example.marvelapp.model.CharacterModel;
 
