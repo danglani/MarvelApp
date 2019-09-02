@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="splash_characters">
+        <item>@drawable/blackwidow_big</item>
+        <item>@drawable/captainamerica_big</item>
+        <item>@drawable/hulk_big</item>
+        <item>@drawable/ironman_big</item>
+        <item>@drawable/thor_big</item>
+    </array>
+
+</resources>
