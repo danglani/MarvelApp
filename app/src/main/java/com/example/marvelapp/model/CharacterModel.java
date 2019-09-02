@@ -5,10 +5,31 @@ import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
 
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
+
+@Entity(tableName = "character_table")
 public class CharacterModel implements Parcelable {
 
+
+    public CharacterModel() {
+    }
+
+    public CharacterModel(long id, String name, String description, CharacterThumbnailModel thumbnail, String filename, boolean isFavourite) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.thumbnail = thumbnail;
+        this.filename = filename;
+        this.isFavourite = isFavourite;
+    }
+
+
+    @PrimaryKey(autoGenerate = true)
     @SerializedName("id")
-     private long id;
+    private long id;
 
     @SerializedName("name")
     private String name;
@@ -17,16 +38,21 @@ public class CharacterModel implements Parcelable {
     private String description;
 
     @SerializedName("thumbnail")
+    @Ignore
     private CharacterThumbnailModel thumbnail;
+
+    @ColumnInfo(name = "filename")
+    private String filename;
 
     private boolean isFavourite;
 
 
-    protected CharacterModel(Parcel in) {
+    private CharacterModel(Parcel in) {
         id = in.readLong();
         name = in.readString();
         description = in.readString();
         isFavourite = in.readByte() != 0;
+        filename = in.readString();
     }
 
 
@@ -68,6 +94,21 @@ public class CharacterModel implements Parcelable {
     }
 
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+
+    public void setThumbnail(CharacterThumbnailModel thumbnail) {
+        this.thumbnail = thumbnail;
+    }
+
+
     public boolean isFavourite() {
         return isFavourite;
     }
@@ -75,6 +116,19 @@ public class CharacterModel implements Parcelable {
 
     public void setFavourite(boolean favourite) {
         isFavourite = favourite;
+    }
+
+
+    public String getFilename() {
+        if(thumbnail != null) {
+            return thumbnail.getFileName();
+        }
+        return "";
+    }
+
+
+    public void setFilename(String filename) {
+        this.filename = filename;
     }
 
 
@@ -90,5 +144,6 @@ public class CharacterModel implements Parcelable {
         dest.writeString(name);
         dest.writeString(description);
         dest.writeByte((byte) (isFavourite ? 1 : 0));
+        dest.writeString(filename);
     }
 }
