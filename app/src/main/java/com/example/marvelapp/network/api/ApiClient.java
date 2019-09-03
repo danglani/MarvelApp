@@ -13,7 +13,7 @@ public class ApiClient {
     private static Gson gson;
     private static APICalls apiInterface;
 
-    public static Retrofit getClient() {
+    private static Retrofit getClient() {
         if (retrofit == null) {
             retrofit = new Retrofit.Builder()
                     .baseUrl(Constants.BASE_URL)
@@ -22,7 +22,7 @@ public class ApiClient {
         }
         return retrofit;
     }
-    public static Gson getGson() {
+    private static Gson getGson() {
         if (gson == null) {
             gson = new GsonBuilder().create();
         }

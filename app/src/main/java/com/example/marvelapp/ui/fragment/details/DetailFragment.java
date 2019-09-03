@@ -22,9 +22,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class DetailFragment extends Fragment {
-    private static final String NAME = "NAME";
-    private static final String DESCRIPTION = "DESCRIPTION";
-    private static final String THUMBNAIL = "THUMBNAIL";
     private static final String TRANSITION_NAME = "TRANSITION_NAME";
     private static final String CHARACTER = "CHARACTER";
 
@@ -35,15 +32,8 @@ public class DetailFragment extends Fragment {
     @BindView(R.id.ivImage)
     ImageView ivImage;
 
-    private String name;
-    private String description;
-    private String thumbnail;
-    private String transitionName;
-    private CharacterModel character;
-
 
     public DetailFragment() {
-        // Required empty public constructor
     }
 
 
@@ -51,9 +41,6 @@ public class DetailFragment extends Fragment {
         DetailFragment fragment = new DetailFragment();
         Bundle args = new Bundle();
         args.putParcelable(CHARACTER, characterItem);
-//        args.putString(NAME, name);
-//        args.putString(DESCRIPTION, description);
-//        args.putString(THUMBNAIL, thumbnail);
         args.putString(TRANSITION_NAME, transitionName);
         fragment.setArguments(args);
         return fragment;
@@ -64,10 +51,6 @@ public class DetailFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         postponeEnterTransition();
-
-//        getActivity().supportPostponeEnterTransition();
-//        startPostponedEnterTransition();
-//        postponeEnterTransition();
         setSharedElementEnterTransition(TransitionInflater.from(getContext()).inflateTransition(android.R.transition.move));
 
     }
@@ -86,27 +69,23 @@ public class DetailFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
         if (getArguments() != null) {
-//            name = getArguments().getString(NAME);
-//            description = getArguments().getString(DESCRIPTION);
-//            thumbnail = getArguments().getString(THUMBNAIL);
-            character = getArguments().getParcelable(CHARACTER);
-            transitionName = getArguments().getString(TRANSITION_NAME);
+            CharacterModel character = getArguments().getParcelable(CHARACTER);
+            String transitionName = getArguments().getString(TRANSITION_NAME);
 
 
             if (character != null) {
-                if (character.getName() != null)
-                    tvName.setText(character.getName());
-                if (character.getDescription() != null)
-                    tvDescription.setText(character.getDescription());
+                tvName.setText(character.getName());
+                tvDescription.setText(character.getDescription());
 
                 if (character.isFavourite()) {
                     tvName.setCompoundDrawablesWithIntrinsicBounds(null, null, getResources().getDrawable(R.drawable.ic_favourite_gold, null), null);
                 }
-                if (character.getThumbnail() != null && character.getThumbnail().getFileName() != null)
-                    ivImage.setTransitionName(transitionName);
+
+                ivImage.setTransitionName(transitionName);
 
                 Picasso.get()
-                        .load(character.getThumbnail().getFileName())
+                        .load(character.getFilename())
+                        .placeholder(R.drawable.image_not_available)
                         .into(ivImage, new Callback() {
                             @Override
                             public void onSuccess() {

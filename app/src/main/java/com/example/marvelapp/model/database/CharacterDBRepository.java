@@ -7,11 +7,13 @@ import com.example.marvelapp.model.CharacterModel;
 
 import java.util.List;
 
+import androidx.lifecycle.LiveData;
+
 public class CharacterDBRepository {
 
-    private final List<CharacterModel> allCharacters;
+    private final LiveData<List<CharacterModel>> allCharacters;
     private CharacterDao characterDao;
-    private List<CharacterModel> favouriteCharacters;
+    private LiveData<List<CharacterModel>> favouriteCharacters;
 
 
     public CharacterDBRepository(Application application) {
@@ -21,14 +23,15 @@ public class CharacterDBRepository {
         allCharacters = characterDao.getAllCharacters();
     }
 
-    public List<CharacterModel> getAllFavouriteCharacters(){
+    public LiveData<List<CharacterModel>> getAllFavouriteCharacters(){
     return favouriteCharacters;
     }
 
-    public List<CharacterModel> getAllCharacters(){
+    public LiveData<List<CharacterModel>> getAllCharacters(){
         return allCharacters;
     }
 
+    @SuppressWarnings("unchecked")
     public void insertAll(List<CharacterModel> models) {
         new insertAllAsyncTask(characterDao).execute(models);
     }
@@ -45,8 +48,9 @@ public class CharacterDBRepository {
             mAsyncTaskDao = dao;
         }
 
+        @SafeVarargs
         @Override
-        protected Void doInBackground(final List<CharacterModel>... params) {
+        protected final Void doInBackground(final List<CharacterModel>... params) {
             mAsyncTaskDao.insertAllCharacters(params[0]);
             return null;
         }
@@ -66,4 +70,5 @@ public class CharacterDBRepository {
             return null;
         }
     }
+
 }

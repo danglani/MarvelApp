@@ -17,12 +17,12 @@ public class CharacterModel implements Parcelable {
     public CharacterModel() {
     }
 
-    public CharacterModel(long id, String name, String description, CharacterThumbnailModel thumbnail, String filename, boolean isFavourite) {
+    public CharacterModel(long id, String name, String description, CharacterThumbnailModel thumbnail, boolean isFavourite) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.thumbnail = thumbnail;
-        this.filename = filename;
+        this.filename = thumbnail.getFileName();
         this.isFavourite = isFavourite;
     }
 
@@ -120,10 +120,7 @@ public class CharacterModel implements Parcelable {
 
 
     public String getFilename() {
-        if(thumbnail != null) {
-            return thumbnail.getFileName();
-        }
-        return "";
+        return filename;
     }
 
 
@@ -145,5 +142,18 @@ public class CharacterModel implements Parcelable {
         dest.writeString(description);
         dest.writeByte((byte) (isFavourite ? 1 : 0));
         dest.writeString(filename);
+    }
+
+
+    @Override
+    public String toString() {
+        return "CharacterModel{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", thumbnail=" + thumbnail +
+                ", filename='" + filename + '\'' +
+                ", isFavourite=" + isFavourite +
+                '}';
     }
 }

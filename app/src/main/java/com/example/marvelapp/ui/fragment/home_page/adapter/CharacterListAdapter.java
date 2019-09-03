@@ -18,7 +18,6 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.core.view.ViewCompat;
 import androidx.recyclerview.widget.RecyclerView;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -29,8 +28,7 @@ public class CharacterListAdapter extends RecyclerView.Adapter<CharacterListAdap
     private final FavouriteClickListener favouriteClickListener;
 
 
-    public CharacterListAdapter(ItemClickListener listener, List<CharacterModel> characterModelList) {
-        mValues = characterModelList;
+    public CharacterListAdapter(ItemClickListener listener) {
         itemClickListener = listener;
         favouriteClickListener = (FavouriteClickListener) listener;
     }
@@ -53,6 +51,11 @@ public class CharacterListAdapter extends RecyclerView.Adapter<CharacterListAdap
         return mValues != null ? mValues.size() : 0;
     }
 
+    public void setCharacters(List<CharacterModel> list){
+        mValues = list;
+        notifyDataSetChanged();
+    }
+
     class ViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.tvTitle)
         TextView name;
@@ -68,10 +71,18 @@ public class CharacterListAdapter extends RecyclerView.Adapter<CharacterListAdap
 
         void bind(CharacterModel model, int position) {
             name.setText(model.getName());
-            Picasso.get()
-                    .load(model.getThumbnail().getFileName())
-                    .into(ivImage);
+            try {
+                Picasso.get()
+                        .load(model.getFilename())
+                        .placeholder(R.drawable.image_not_available)
+                        .into(ivImage);
+            }catch (Exception e){
+             e.printStackTrace();
+            }
+
+//            SET DYNAMIC TRANSITION NAME TO SHOW IMAGE ANIMATION BETWEEN MASTER AND DETAIL FRAGMENT
             ViewCompat.setTransitionName(ivImage, String.valueOf(position));
+
             fabFavourite.setImageResource(model.isFavourite() ? R.drawable.ic_favourite_gold : R.drawable.ic_favourite_grey);
 
             ivImage.setOnClickListener(v -> itemClickListener.onItemClickListener(model, ivImage));

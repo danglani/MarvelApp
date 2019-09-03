@@ -16,7 +16,7 @@ public class HomePagePresenter implements HomePageContract.Presenter {
 
     private final CharacterDBRepository characterDBRepository;
     private CharacterRepository characterRepository;
-    private CharacterListFragment view;
+    private HomePageContract.View view;
 
     HomePagePresenter(CharacterListFragment view, CharacterDBRepository characterDBRepository){
         this.view = view;
@@ -34,14 +34,15 @@ public class HomePagePresenter implements HomePageContract.Presenter {
             @Override
             public void onSuccess(ResponseModel object) {
                 view.hideProgressBar();
+                view.setTotalCharacters(object.getData().getTotal());
                 long timestamp = ts;
                 timestamp += 1;
+//                SAVE AND ENCRYPT TIMESTAMP INTO PREFERENCES
                 EncryptPreferencesMgmt.getInstance().setTimeStamp(timestamp);
-                characterDBRepository.insertAll(object.getData().getResults());
-                view.showCharacters(object.getData().getResults(), object.getData().getTotal());
+                List<CharacterModel> list = object.getData().getResults();
+                setThumbnails(list);
+                characterDBRepository.insertAll(list);
             }
-
-
 
             @Override
             public void onFailure(String error) {
@@ -52,21 +53,10 @@ public class HomePagePresenter implements HomePageContract.Presenter {
 
     }
 
-
-    void syncronizeFavourites(List<CharacterModel> characterModelList) {
-        for(CharacterModel favouriteModel : characterDBRepository.getAllFavouriteCharacters()){
-            for(int i = 0; i < characterModelList.size(); i++){
-
-                if(characterModelList.get(i).getId() == favouriteModel.getId()){
-                    characterModelList.get(i).setFavourite(favouriteModel.isFavourite());
-                }
-            }
+    private void setThumbnails(List<CharacterModel> list) {
+        for(int i = 0; i < list.size(); i++){
+            list.get(i).setFilename(list.get(i).getThumbnail().getFileName());
         }
-    }
-
-
-    List<CharacterModel> getAllCharacters() {
-        return characterDBRepository.getAllCharacters();
     }
 
 
