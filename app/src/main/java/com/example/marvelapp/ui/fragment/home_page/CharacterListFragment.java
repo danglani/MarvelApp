@@ -75,11 +75,7 @@ public class CharacterListFragment extends Fragment implements HomePageContract.
         viewModel.getAllCharacters().observe(this, characterModels -> {
             adapter.setCharacters(characterModels);
 //                STOP CALL API WHEN ALL ELEMENTS ARE SAVED
-            if(characterModels.size() == totalCharacters){
-                stopLoadingMore = true;
-            }else{
-                stopLoadingMore = false;
-            }
+            stopLoadingMore = characterModels.size() == totalCharacters;
         });
     }
 
